@@ -2,8 +2,10 @@ from flask import Flask, request, jsonify
 import openai
 import os
 import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Set up OpenAI API key
 openai.api_key = 'sk-proj-QsvcUFIhi6mRx08RMqLHT3BlbkFJsj55VsJOYwDCNPFO3ht3'
@@ -19,7 +21,7 @@ def home():
 def generate_script():
     data = request.json
     topic = data['topic']
-    
+
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -27,7 +29,7 @@ def generate_script():
             {"role": "user", "content": f"Write a detailed script about {topic}."}
         ]
     )
-    
+
     script = response['choices'][0]['message']['content']
     return jsonify({'script': script})
 
@@ -35,16 +37,16 @@ def generate_script():
 def fetch_media():
     data = request.json
     query = data['query']
-    
+
     headers = {
         'Authorization': PEXELS_API_KEY
     }
-    
+
     response = requests.get(
         f'https://api.pexels.com/v1/search?query={query}&per_page=10',
         headers=headers
     )
-    
+
     media = response.json()
     return jsonify(media)
 
